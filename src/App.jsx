@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Column from "./components/Column";
 import TaskForm from "./components/TaskForm";
 
@@ -8,14 +8,22 @@ const COLUMNS = [
   { id: "done", title: "Hecho" },
   { id: "review", title: "En revisión" },
 ];
-  
+
 const initialTasks = [
   { id: 1, title: "Diseñar la base de datos", status: "done", priority: "alta" },
   { id: 2, title: "Crear el login", status: "doing", priority: "media" },
 ];
 
 export default function App() {
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState(() => {
+  const saved = localStorage.getItem("kanban-tasks");
+  return saved ? JSON.parse(saved) : initialTasks;
+});
+
+useEffect(() => {
+    localStorage.setItem("kanban-tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
 
   function addTask(title, priority) {
     // RETO 2: Evitar repetidos (sin importar mayúsculas)
